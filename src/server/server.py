@@ -16,8 +16,16 @@ def get_process_by_pid(pid: int):
     """
     Endpoint to get a process by its PID.
     """
-    process = Process.get_process_by_pid(pid)
+    process = Process.get_process_info(pid)
     if process:
         return process
     else:
         raise HTTPException(status_code=404, detail=f"Process with PID {pid} not found")
+    
+@app.post("/killprocess/{pid}")
+def post_kill_process(pid:int):
+    result_string= Process.kill_process(pid)
+    res = {
+        "res" : result_string
+    }
+    return res

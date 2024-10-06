@@ -56,6 +56,19 @@ class Process:
         except psutil.NoSuchProcess:
             return None
     
+    @staticmethod
+    def kill_process(pid):
+        try:
+            process = psutil.Process(pid)
+            process.terminate()
+            process.wait(timeout=3)
+            return "Process terminated"
+        except psutil.NoSuchProcess:
+            return "No process found"
+        except psutil.TimeoutExpired:
+            return f"Process {pid} could not be terminated within the timeout."
+        except Exception as e:
+            return f"Error terminating process {pid}: {e}"
 
 def main():
     all_processes = Process.list_all_processes()
