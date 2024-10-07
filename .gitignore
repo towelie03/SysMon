@@ -1,3 +1,2 @@
-src/server/__pycache__/proccess_handler.cpython-312.pyc
-src/server/__pycache__/server.cpython-312.pyc
+src/server/__pycache__/*
 src/server/.venv
