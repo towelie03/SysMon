@@ -1,5 +1,4 @@
 import psutil
-from tabulate import tabulate
 import time
 
 class Network:
