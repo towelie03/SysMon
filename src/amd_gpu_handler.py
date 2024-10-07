@@ -1,5 +1,5 @@
 import pyamdgpuinfo
-import subprocess
+#https://pypi.org/project/pyamdgpuinfo/
 
 class AMDGPU:
     
@@ -8,7 +8,7 @@ class AMDGPU:
         """
         Checks if AMD GPUs are available. Returns a list of devices or None.
         """
-        devices = pyamdgpuinfo.get_gpu()
+        devices = pyamdgpuinfo.detect_gpus()
         return devices if devices else None
 
     @staticmethod
