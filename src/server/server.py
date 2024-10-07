@@ -46,6 +46,20 @@ def post_kill_process(pid:int):
     return res
 
 #CPU
+@app.get("/cpu/all")
+def get_all_cpu_data():
+    cpu_data = {
+        "cpu_usage": CPU.get_cpu_usage(),
+        "per_cpu_usage": CPU.get_per_cpu_usage(),
+        "cpu_frequency": CPU.get_cpu_frequency(),
+        "cpu_count": CPU.get_cpu_count(),
+        "load_average": CPU.get_load_average(),
+        "core_utilization": CPU.get_core_utilization(),
+        "cpu_temperature": CPU.get_cpu_temperature(),
+        "cpu_times": CPU.get_cpu_times()
+    }
+    return cpu_data
+
 @app.get("/cpu/usage")
 def cpu_usage():
     return {"cpu_usage": CPU.get_cpu_usage()}
@@ -79,6 +93,18 @@ def cpu_times():
     return {"cpu_times": CPU.get_cpu_times()}
 
 #MEMORY
+@app.get("/memory/all")
+def get_all_memory_data():
+    memory_data = {
+        "virtual_memory": Memory.get_virtual_memory(),
+        "swap_memory": Memory.get_swap_memory(),
+        "memory_percent": Memory.get_memory_percent(),
+        "memory_usage": Memory.get_memory_usage(),
+        "memory_available": Memory.get_memory_available(),
+        "memory_total": Memory.get_memory_total()
+    }
+    return memory_data
+
 @app.get("/memory/virtual")
 def virtual_memory():
     return {"virtual_memory": Memory.get_virtual_memory()}
