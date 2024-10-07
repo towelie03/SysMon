@@ -1,4 +1,6 @@
+import { Button } from "@/components/ui/button"
 import { ColumnDef } from "@tanstack/react-table"
+import { ArrowUpDown } from "lucide-react"
 
 export type Process = {
   pid: string
@@ -23,8 +25,20 @@ export const columns: ColumnDef<Process>[] = [
   },
   {
     accessorKey: "cpu_usage",
-    header: "CPU Usage",
     accessorFn: (row) => `${row.cpu_usage}%`,
+    cell: (props) => <span className="pl-4">{props.getValue() as string}</span>,
+    header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            CPU Usage
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        )
+      },
+
   },
   {
     accessorKey: "memory_usage",

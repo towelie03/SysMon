@@ -39,7 +39,7 @@ export function ProcessListView() {
         let retJson = await ret.json();
 
         setData(retJson);
-      }, 2000);
+      }, 10000);
     };
 
     asyncBridge();
