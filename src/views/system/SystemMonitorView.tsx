@@ -1,5 +1,7 @@
+import { useContext } from "react";
 import { Separator } from "../../components/ui/separator";
-import { Line, LineChart, ResponsiveContainer } from "recharts";
+import { Line, LineChart, ResponsiveContainer, YAxis } from "recharts";
+import { CpuDataContext } from "./cpu/cpu_data_context";
 
 const data = [
   {
@@ -47,6 +49,15 @@ const data = [
 ];
 
 export function SystemMonitorView() {
+  const cpuPerc = useContext(CpuDataContext);
+
+  function getCpuPerc() {
+    var obj: any = cpuPerc[cpuPerc.length - 1]
+    if (obj === undefined) 
+        return "0"
+    return obj.amt
+  }
+
   return (
     <div className="flex flex-row w-full h-full">
       <div className="bg-popover flex flex-col w-[30%] h-full gap-4 pr-4">
@@ -55,21 +66,25 @@ export function SystemMonitorView() {
             <LineChart
               width={200}
               height={100}
-              data={data}
+              data={cpuPerc}
               className="bg-muted h-full rounded-lg"
             >
+              <YAxis domain={[0, 100]} hide />
               <Line
                 type="monotone"
-                dataKey="pv"
+                dataKey="amt"
                 stroke="#8884d8"
+                dot={false}
                 strokeWidth={2}
+                min={0}
+                max={100}
               />
             </LineChart>
           </ResponsiveContainer>
           <div className="w-[50%] pl-4 ">
             <div className="font-semibold text-3xl">CPU</div>
             <div className="mt-0 text-lg text-muted-foreground">
-              39% 3.82Ghz
+              {getCpuPerc()}% 3.82Ghz
             </div>
           </div>
         </div>
