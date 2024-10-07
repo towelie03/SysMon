@@ -87,3 +87,20 @@
   --chart-5: 115 54.09836173057556% 76.07843279838562%;
   /* green */
 }
+
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #45475a;
+  border-radius: 5px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #181825;
+  border-radius: 5px;
+}
