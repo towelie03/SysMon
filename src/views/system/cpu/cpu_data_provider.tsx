@@ -2,7 +2,7 @@ import { ReactNode, useEffect, useState } from "react";
 import { CpuDataContext } from "./cpu_data_context";
 
 export function CpuUsageProvider({ children }: { children: ReactNode }) {
-  const [data, setData] = useState<Array<{}>>([]);
+  const [data, setData] = useState<Array<any>>([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
 
   useEffect(() => {
     const fetchData = async () => {

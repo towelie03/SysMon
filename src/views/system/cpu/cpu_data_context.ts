@@ -1,3 +1,3 @@
 import { createContext } from "react";
 
-export const CpuDataContext = createContext<Array<{}>>([])
+export const CpuDataContext = createContext<Array<any>>([])

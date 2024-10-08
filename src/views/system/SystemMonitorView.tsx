@@ -2,6 +2,7 @@ import { useContext } from "react";
 import { Separator } from "../../components/ui/separator";
 import { Line, LineChart, ResponsiveContainer, YAxis } from "recharts";
 import { CpuDataContext } from "./cpu/cpu_data_context";
+import { CpuInfoView } from "./cpu/cpu_info_view";
 
 const data = [
   {
@@ -160,7 +161,9 @@ export function SystemMonitorView() {
         </div>
         <Separator></Separator>
       </div>
-      <div className="w-full bg-muted rounded-md p-4">abcd</div>
+      <div className="w-full bg-muted rounded-md p-4">
+        <CpuInfoView></CpuInfoView>
+      </div>
     </div>
   );
 }
