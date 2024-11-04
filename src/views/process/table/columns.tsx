@@ -33,6 +33,7 @@ export const columns: ColumnDef<Process>[] = [
   },
   {
     accessorKey: "cpu_usage",
+    id: "cpu_usage",
     accessorFn: (row) => `${row.cpu_usage}%`,
     cell: (props) => <span className="pl-4">{props.getValue() as string}</span>,
     header: ({ column }) => {

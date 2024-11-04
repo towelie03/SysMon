@@ -16,12 +16,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useState } from "react";
-import {
-  ContextMenu,
-  ContextMenuContent,
-  ContextMenuTrigger,
-} from "@radix-ui/react-context-menu";
-import { ContextMenuItem } from "@/components/ui/context-menu";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -32,7 +26,12 @@ export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = useState<SortingState>([]);
+  const [sorting, setSorting] = useState<SortingState>([
+    {
+      id: "cpu_usage",
+      desc: true,
+    },
+  ]);
 
   const table = useReactTable({
     data,
