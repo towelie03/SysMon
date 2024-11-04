@@ -10,7 +10,7 @@ async def check_system_resources(cpu_threshold=80, memory_threshold=80, disk_thr
                                  network_threshold=1000000, gpu_threshold=80, check_interval=10):
     while True:
         cpu_usage = CPU.get_cpu_usage()
-        memory_usage = Memory.get_memory_usage()
+        memory_usage = Memory.get_memory_percent()
         disk_usage = Disk.get_disk_usage('/')['percent']
         net_io = Network.get_bandwidth_usage()
         network_usage = (net_io['bytes_sent'] + net_io['bytes_received']) / check_interval
@@ -39,10 +39,10 @@ async def check_system_resources(cpu_threshold=80, memory_threshold=80, disk_thr
 
         # Check Memory usage
         if memory_usage > memory_threshold:
-            print(f"Memory usage is above threshold: {memory_usage}%")
+            print(f"Memory usage is above threshold: {memory_usage:.2f}%")
             notification.notify(
                 title='Memory Usage Alert',
-                message=f'Memory usage is at {memory_usage}%',
+                message=f'Memory usage is at {memory_usage:.2f}%',
                 timeout=10
             )
 
