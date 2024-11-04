@@ -146,7 +146,8 @@ def get_all_disk_data(path: str = "/"):
         "partitions": Disk.get_disk_partitions(),
         "usage": Disk.get_disk_usage(path),
         "io_counters": Disk.get_disk_io_counters(),
-        "io_counters_per_disk": Disk.get_disk_io_counters_per_disk()
+        "io_counters_per_disk": Disk.get_disk_io_counters_per_disk(),
+        "active_time": Disk.get_disk_active_time_percentage()
     }
     return disk_data
 
@@ -161,3 +162,13 @@ def get_all_gpu_data():
         "power_usage": GPU.get_gpu_power_usage()
     }
     return gpu_data
+
+@app.get("/realtime")
+def get_all_realtime_data():
+    realtime_tracking_data = {
+        "throughput": Network.monitor_total_traffic(),
+        "cpu_usage": CPU.get_cpu_usage(),
+        "disk_active_time": Disk.get_disk_active_time_percentage(),
+        "gpu_usage": GPU.get_gpu_usage()
+    }
+    return realtime_tracking_data

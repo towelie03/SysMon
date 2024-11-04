@@ -56,6 +56,19 @@ class Network:
         except KeyboardInterrupt:
             print("Real-time monitoring stopped.")
 
+    @staticmethod
+    def monitor_total_traffic(interval=1):
+        previous_net_io = psutil.net_io_counters()
+        time.sleep(interval)
+        current_net_io = psutil.net_io_counters()
+        sent_per_second = (current_net_io.bytes_sent - previous_net_io.bytes_sent) / interval
+        recv_per_second = (current_net_io.bytes_recv - previous_net_io.bytes_recv) / interval
+        monitored_traffic = {
+            "sent": sent_per_second,
+            "recv": recv_per_second
+        }
+        return monitored_traffic
+
 def main():
 
     bandwidth = Network.get_bandwidth_usage()
