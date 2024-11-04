@@ -3,6 +3,8 @@ from proccess_handler import Process
 from cpu_handler import CPU
 from mem_handler import Memory
 from network_handler import Network
+from disk_handler import Disk
+from nvidia_gpu_handler import GPU
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -133,3 +135,29 @@ def memory_total():
 @app.get("/network/bandwidth")
 def get_bandwidth_usage():
     return {"bandwidth_usage": Network.get_bandwidth_usage()}
+
+@app.get("/disk/all")
+def get_all_disk_data(path: str = "/"):
+    """
+    Endpoint to get all disk-related information, including partitions, usage,
+    and I/O statistics.
+    """
+    disk_data = {
+        "partitions": Disk.get_disk_partitions(),
+        "usage": Disk.get_disk_usage(path),
+        "io_counters": Disk.get_disk_io_counters(),
+        "io_counters_per_disk": Disk.get_disk_io_counters_per_disk()
+    }
+    return disk_data
+
+@app.get("/gpu/all")
+def get_all_gpu_data():
+    gpu_data = {
+        "usage": GPU.get_gpu_usage(),
+        "memory_usage": GPU.get_gpu_memory_usage(),
+        "temperature": GPU.get_gpu_temperature(),
+        "count": GPU.get_gpu_count(),
+        "details": GPU.get_gpu_details(),
+        "power_usage": GPU.get_gpu_power_usage()
+    }
+    return gpu_data
