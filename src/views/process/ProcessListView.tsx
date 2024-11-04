@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Process, columns } from "./table/columns";
+import { columns } from "./table/columns";
 import { DataTable } from "./table/data-table";
 import { cn } from "@/lib/utils";
 
