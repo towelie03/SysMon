@@ -173,6 +173,8 @@ def get_all_realtime_data():
         "memory_usage": Memory.get_memory_usage(),
         "memory_total": Memory.get_memory_total(),
         "memory_percent": Memory.get_memory_percent(),
+        "memory_available": Memory.get_memory_available(),
+        "memory_swap": Memory.get_swap_memory(),
         "disk_active_time": Disk.get_disk_active_time_percentage(),
         # "gpu_usage": GPU.get_gpu_usage()
     }
