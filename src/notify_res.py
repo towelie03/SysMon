@@ -98,6 +98,9 @@ async def check_system_resources(cpu_threshold=80, memory_threshold=80, disk_thr
         await asyncio.sleep(check_interval)
 
 if __name__ == "__main__":
-    asyncio.run(check_system_resources(cpu_threshold=80, memory_threshold=80, 
-                                       disk_threshold=80, network_threshold=1000000, 
-                                       gpu_threshold=80, check_interval=10))
+    asyncio.run(check_system_resources(cpu_threshold=10, memory_threshold=10,
+                                       disk_threshold=10, network_threshold=500000,
+                                       gpu_threshold=10, check_interval=10))
+    # asyncio.run(check_system_resources(cpu_threshold=80, memory_threshold=80,
+    #                                    disk_threshold=80, network_threshold=1000000,
+    #                                    gpu_threshold=80, check_interval=10))
