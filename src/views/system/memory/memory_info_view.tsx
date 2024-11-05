@@ -25,8 +25,8 @@ export function MemoryInfoView() {
           <AreaChart data={data} className="bg-popover rounded-lg">
             <defs>
               <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8} />
-                <stop offset="95%" stopColor="#8884d8" stopOpacity={0} />
+                <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.8} />
+                <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
               </linearGradient>
             </defs>
             <XAxis hide />
@@ -35,7 +35,7 @@ export function MemoryInfoView() {
             <Area
               type="monotone"
               dataKey="memory_percent"
-              stroke="#8884d8"
+              stroke="hsl(var(--primary))"
               fillOpacity={1}
               fill="url(#colorUv)"
             />

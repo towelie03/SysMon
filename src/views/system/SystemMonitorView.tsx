@@ -54,8 +54,6 @@ const data = [
 export function SystemMonitorView() {
   const realtimeData = useContext(RealtimeDataContext);
 
-  console.log(realtimeData)
-
   const [page, setPage] = useState(0);
 
   function getCpuPerc() {
@@ -114,7 +112,7 @@ export function SystemMonitorView() {
               <Line
                 type="monotone"
                 dataKey="cpu_usage"
-                stroke="#8884d8"
+                stroke={`hsl(var(--primary))`}
                 dot={false}
                 strokeWidth={2}
                 min={0}
@@ -148,7 +146,7 @@ export function SystemMonitorView() {
               <Line
                 type="monotone"
                 dataKey="memory_percent"
-                stroke="#8884d8"
+                stroke="hsl(var(--primary))"
                 dot={false}
                 strokeWidth={2}
                 min={0}
@@ -182,7 +180,7 @@ export function SystemMonitorView() {
               <Line
                 type="monotone"
                 dataKey="disk_active_time"
-                stroke="#8884d8"
+                stroke="hsl(var(--primary))"
                 dot={false}
                 strokeWidth={2}
                 min={0}
@@ -212,7 +210,7 @@ export function SystemMonitorView() {
               <Line
                 type="monotone"
                 dataKey="pv"
-                stroke="#8884d8"
+                stroke="hsl(var(--primary))"
                 strokeWidth={2}
               />
             </LineChart>

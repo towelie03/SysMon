@@ -65,14 +65,14 @@ export function DataTable<TData, TValue>({
         />
       </div>
 
-      <div className="rounded-md border border-muted h-full text-foreground">
+      <div className="rounded-md border border-muted h-full">
         <Table className="h-full">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className="border-muted">
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id} className="font-bold text-white">
+                    <TableHead key={header.id} className="font-bold">
                       {header.isPlaceholder
                         ? null
                         : flexRender(
