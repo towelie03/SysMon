@@ -36,6 +36,16 @@ def get_disk_type_and_threshold():
     print(f"Disk I/O Threshold set to: {disk_io_threshold} MB/s")
     return disk_io_threshold
 
+def check_gpu_availability():
+    # Check if any GPU information is available
+    gpu_info = GPU.get_gpu_usage()
+    if isinstance(gpu_info, dict) and gpu_info:  # Ensure it's a non-empty dictionary
+        print("GPU detected. Monitoring enabled.")
+        return True
+    else:
+        print("No GPU detected. GPU monitoring disabled.")
+        return False
+
 async def check_system_resources(cpu_threshold=80, memory_threshold=80, storage_threshold=90,
                                  gpu_threshold=80, disk_io_threshold=100, check_interval=10):
     # Queue to store recent network usage values for rolling average, tracking last 5 intervals
@@ -43,6 +53,9 @@ async def check_system_resources(cpu_threshold=80, memory_threshold=80, storage_
 
     # Initial disk I/O counters to calculate throughput
     old_io = psutil.disk_io_counters()
+
+    # Determine GPU availability
+    has_gpu = check_gpu_availability()
 
     while True:
         # Get CPU, memory, disk storage usage
@@ -52,9 +65,18 @@ async def check_system_resources(cpu_threshold=80, memory_threshold=80, storage_
         net_io = Network.get_bandwidth_usage()
         network_usage = (net_io['bytes_sent'] + net_io['bytes_received']) / check_interval
 
-        gpu_usages = GPU.get_gpu_usage()
-        gpu_memory_usages = GPU.get_gpu_memory_usage()
-        gpu_temperatures = GPU.get_gpu_temperature()
+        # Only retrieve GPU data if a GPU is detected
+        gpu_usages = GPU.get_gpu_usage() if has_gpu else {}
+        gpu_memory_usages = GPU.get_gpu_memory_usage() if has_gpu else {}
+        gpu_temperatures = GPU.get_gpu_temperature() if has_gpu else {}
+
+        # Ensure GPU data is a dictionary, otherwise set it to empty if unavailable
+        if not isinstance(gpu_usages, dict):
+            gpu_usages = {}
+        if not isinstance(gpu_memory_usages, dict):
+            gpu_memory_usages = {}
+        if not isinstance(gpu_temperatures, dict):
+            gpu_temperatures = {}
 
         # Disk I/O throughput calculation
         new_io = psutil.disk_io_counters()
@@ -81,9 +103,10 @@ async def check_system_resources(cpu_threshold=80, memory_threshold=80, storage_
         print(f"Disk I/O Throughput: {total_speed:.2f} MB/s")
         print(f"Network Usage: {Network.bytes_convert(network_usage)}")
         print(f"Dynamic Network Threshold: {Network.bytes_convert(dynamic_network_threshold)}")
-        print(f"GPU Usages: {gpu_usages}")
-        print(f"GPU Memory Usages: {gpu_memory_usages}")
-        print(f"GPU Temperatures: {gpu_temperatures}")
+        if has_gpu:
+            print(f"GPU Usages: {gpu_usages}")
+            print(f"GPU Memory Usages: {gpu_memory_usages}")
+            print(f"GPU Temperatures: {gpu_temperatures}")
 
         # Check CPU usage
         if cpu_usage > cpu_threshold:
@@ -113,7 +136,7 @@ async def check_system_resources(cpu_threshold=80, memory_threshold=80, storage_
             )
 
         # Check Disk I/O throughput
-        if total_speed > disk_io_threshold:  # Threshold for disk I/O throughput in MB/s
+        if total_speed > disk_io_threshold:
             print(f"Disk I/O is above threshold: {total_speed:.2f} MB/s")
             notification.notify(
                 title='Disk I/O Alert',
@@ -129,6 +152,39 @@ async def check_system_resources(cpu_threshold=80, memory_threshold=80, storage_
                 message=f'Network usage is at {Network.bytes_convert(network_usage)}',
                 timeout=10
             )
+
+        # GPU monitoring, only if GPU is available
+        if has_gpu:
+            # Check GPU usage
+            for gpu_id, load in gpu_usages.items():
+                if load > gpu_threshold:
+                    print(f"GPU {gpu_id} usage is above threshold: {load:.2f}%")
+                    notification.notify(
+                        title=f'GPU Usage Alert - GPU {gpu_id}',
+                        message=f'GPU {gpu_id} usage is at {load:.2f}%',
+                        timeout=10
+                    )
+
+            # Check GPU memory usage
+            for gpu_id, mem_info in gpu_memory_usages.items():
+                used_memory_percentage = (mem_info['used'] / mem_info['total']) * 100
+                if used_memory_percentage > gpu_threshold:
+                    print(f"GPU {gpu_id} memory usage is above threshold: {used_memory_percentage:.2f}%")
+                    notification.notify(
+                        title=f'GPU Memory Usage Alert - GPU {gpu_id}',
+                        message=f'GPU {gpu_id} memory usage is at {used_memory_percentage:.2f}%',
+                        timeout=10
+                    )
+
+            # Check GPU temperature
+            for gpu_id, temp in gpu_temperatures.items():
+                if temp > 80:
+                    print(f"GPU {gpu_id} temperature is above threshold: {temp}°C")
+                    notification.notify(
+                        title=f'GPU Temperature Alert - GPU {gpu_id}',
+                        message=f'GPU {gpu_id} temperature is at {temp}°C',
+                        timeout=10
+                    )
 
         await asyncio.sleep(check_interval)
 
