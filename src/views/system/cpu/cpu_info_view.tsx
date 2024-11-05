@@ -7,11 +7,19 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { CpuDataContext } from "./cpu_data_context";
+import { RealtimeDataContext } from "../realtime/realtime_data_context";
 
 export function CpuInfoView() {
-  const data = useContext(CpuDataContext);
+  const realtimeData = useContext(RealtimeDataContext);
   const [cpu_data, setCpuData] = useState<any>({});
+
+  function getCpuUsage() {
+    if (realtimeData[realtimeData.length - 1] == undefined) {
+      return "Unkown";
+    }
+
+    return realtimeData[realtimeData.length - 1].cpu_usage;
+  }
 
   useEffect(() => {
     async function asyncBridge() {
@@ -29,7 +37,7 @@ export function CpuInfoView() {
     <div className="flex flex-row h-full gap-6">
       <div className="flex flex-col h-[90%] flex-1">
         <ResponsiveContainer className="flex-1" width="100%">
-          <AreaChart data={data} className="bg-popover rounded-lg">
+          <AreaChart data={realtimeData} className="bg-popover rounded-lg">
             <defs>
               <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8} />
@@ -41,7 +49,7 @@ export function CpuInfoView() {
             <CartesianGrid strokeDasharray="9 9" opacity={0.25} />
             <Area
               type="monotone"
-              dataKey="amt"
+              dataKey="cpu_usage"
               stroke="#8884d8"
               fillOpacity={1}
               fill="url(#colorUv)"
@@ -60,7 +68,7 @@ export function CpuInfoView() {
 
         <div>
             <div className="text-4xl font-semibold pb-2">Utilization</div>
-            <div>{data[data.length - 1].amt}%</div>
+            <div>{getCpuUsage()}%</div>
         </div>
 
         <div>

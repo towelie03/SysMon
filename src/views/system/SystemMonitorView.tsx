@@ -1,10 +1,9 @@
 import { useContext, useState } from "react";
 import { Separator } from "../../components/ui/separator";
 import { Line, LineChart, ResponsiveContainer, YAxis } from "recharts";
-import { CpuDataContext } from "./cpu/cpu_data_context";
 import { CpuInfoView } from "./cpu/cpu_info_view";
-import { MemoryDataContext } from "./memory/memory_data_context";
 import { MemoryInfoView } from "./memory/memory_info_view";
+import { RealtimeDataContext } from "./realtime/realtime_data_context";
 
 const data = [
   {
@@ -52,19 +51,20 @@ const data = [
 ];
 
 export function SystemMonitorView() {
-  const cpuPerc = useContext(CpuDataContext);
-  const memoryPerc = useContext(MemoryDataContext);
+  const realtimeData = useContext(RealtimeDataContext);
+
+  console.log(realtimeData)
 
   const [page, setPage] = useState(0);
 
   function getCpuPerc() {
-    var obj: any = cpuPerc[cpuPerc.length - 1];
+    var obj: any = realtimeData[realtimeData.length - 1];
     if (obj === undefined) return "0";
-    return obj.amt;
+    return obj.cpu_usage;
   }
 
   function getMemoryPerc() {
-    var obj: any = memoryPerc[memoryPerc.length - 1];
+    var obj: any = realtimeData[realtimeData.length - 1];
     if (obj === undefined) return "Unknown";
     return `${(obj.memory_usage / 1024 / 1024 / 1024).toFixed(2)} / ${(
       obj.memory_total /
@@ -98,13 +98,13 @@ export function SystemMonitorView() {
             <LineChart
               width={200}
               height={100}
-              data={cpuPerc}
+              data={realtimeData}
               className="bg-muted h-full rounded-lg"
             >
               <YAxis domain={[0, 100]} hide />
               <Line
                 type="monotone"
-                dataKey="amt"
+                dataKey="cpu_usage"
                 stroke="#8884d8"
                 dot={false}
                 strokeWidth={2}
@@ -132,7 +132,7 @@ export function SystemMonitorView() {
             <LineChart
               width={200}
               height={100}
-              data={memoryPerc}
+              data={realtimeData}
               className="bg-muted h-full rounded-lg"
             >
               <YAxis domain={[0, 100]} hide />

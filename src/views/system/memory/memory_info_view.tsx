@@ -7,10 +7,10 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { MemoryDataContext } from "./memory_data_context";
+import { RealtimeDataContext } from "../realtime/realtime_data_context";
 
 export function MemoryInfoView() {
-  const data = useContext(MemoryDataContext);
+  const data = useContext(RealtimeDataContext);
 
   function getMemoryObj() {
     var obj: any = data[data.length - 1];
