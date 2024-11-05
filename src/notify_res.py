@@ -1,18 +1,45 @@
 from plyer import notification
 import asyncio
 from collections import deque
-import psutil  # Import psutil for disk I/O
+import psutil
 from cpu_handler import CPU
 from mem_handler import Memory
 from disk_handler import Disk
 from network_handler import Network
 from nvidia_gpu_handler import GPU
 
+def get_disk_type_and_threshold():
+    # Default threshold values (in MB/s) based on disk type, could be more optimized.
+    thresholds = {
+        'hdd': 100,
+        'sata_ssd': 300,
+        'nvme_ssd': 1000
+    }
+
+    # Detect disk type by inspecting disk device names
+    disk_type = 'unknown'
+    for disk in psutil.disk_partitions():
+        if 'nvme' in disk.device:
+            disk_type = 'nvme_ssd'
+            break
+        elif 'sd' in disk.device:
+            # Assuming SATA SSD if it’s /dev/sdX
+            disk_type = 'sata_ssd'
+        elif 'hd' in disk.device:
+            # Assuming HDD if it’s /dev/hdX
+            disk_type = 'hdd'
+
+    # Get threshold based on detected disk type, default to 100 MB/s if unknown. Might need to be higher.
+    disk_io_threshold = thresholds.get(disk_type, 100)
+
+    print(f"Detected Disk Type: {disk_type}")
+    print(f"Disk I/O Threshold set to: {disk_io_threshold} MB/s")
+    return disk_io_threshold
 
 async def check_system_resources(cpu_threshold=80, memory_threshold=80, storage_threshold=90,
                                  gpu_threshold=80, disk_io_threshold=100, check_interval=10):
-    # Queue to store recent network usage values for rolling average
-    network_usage_history = deque(maxlen=5)  # Track last 5 intervals
+    # Queue to store recent network usage values for rolling average, tracking last 5 intervals
+    network_usage_history = deque(maxlen=5)
 
     # Initial disk I/O counters to calculate throughput
     old_io = psutil.disk_io_counters()
@@ -21,7 +48,7 @@ async def check_system_resources(cpu_threshold=80, memory_threshold=80, storage_
         # Get CPU, memory, disk storage usage
         cpu_usage = CPU.get_cpu_usage()
         memory_usage = Memory.get_memory_percent()
-        disk_storage_usage = Disk.get_disk_usage('/')['percent']  # Storage as percentage
+        disk_storage_usage = Disk.get_disk_usage('/')['percent']
         net_io = Network.get_bandwidth_usage()
         network_usage = (net_io['bytes_sent'] + net_io['bytes_received']) / check_interval
 
@@ -33,8 +60,10 @@ async def check_system_resources(cpu_threshold=80, memory_threshold=80, storage_
         new_io = psutil.disk_io_counters()
         read_speed = (new_io.read_bytes - old_io.read_bytes) / check_interval
         write_speed = (new_io.write_bytes - old_io.write_bytes) / check_interval
-        total_speed = (read_speed + write_speed) / (1024 * 1024)  # Convert to MB/s
-        old_io = new_io  # Update old_io for the next interval
+        # Convert to MB/s
+        total_speed = (read_speed + write_speed) / (1024 * 1024)
+        # Update old_io for the next interval
+        old_io = new_io
 
         # Add current network usage to the history for rolling average calculation
         network_usage_history.append(network_usage)
@@ -101,41 +130,13 @@ async def check_system_resources(cpu_threshold=80, memory_threshold=80, storage_
                 timeout=10
             )
 
-        # # Check GPU usage and notify if any GPU exceeds the threshold
-        # for gpu_id, load in gpu_usages.items():
-        #     if load > gpu_threshold:
-        #         print(f"GPU {gpu_id} usage is above threshold: {load:.2f}%")
-        #         notification.notify(
-        #             title=f'GPU Usage Alert - GPU {gpu_id}',
-        #             message=f'GPU {gpu_id} usage is at {load:.2f}%',
-        #             timeout=10
-        #         )
-
-        # # Check GPU memory usage
-        # for gpu_id, mem_info in gpu_memory_usages.items():
-        #     used_memory_percentage = (mem_info['used'] / mem_info['total']) * 100
-        #     if used_memory_percentage > gpu_threshold:
-        #         print(f"GPU {gpu_id} memory usage is above threshold: {used_memory_percentage:.2f}%")
-        #         notification.notify(
-        #             title=f'GPU Memory Usage Alert - GPU {gpu_id}',
-        #             message=f'GPU {gpu_id} memory usage is at {used_memory_percentage:.2f}%',
-        #             timeout=10
-        #         )
-
-        # # Check GPU temperature
-        # for gpu_id, temp in gpu_temperatures.items():
-        #     if temp > 80:
-        #         print(f"GPU {gpu_id} temperature is above threshold: {temp}°C")
-        #         notification.notify(
-        #             title=f'GPU Temperature Alert - GPU {gpu_id}',
-        #             message=f'GPU {gpu_id} temperature is at {temp}°C',
-        #             timeout=10
-        #         )
-
         await asyncio.sleep(check_interval)
 
 
 if __name__ == "__main__":
+    # Automatically set disk_io_threshold based on disk type
+    disk_io_threshold = get_disk_type_and_threshold()
+
     asyncio.run(check_system_resources(cpu_threshold=80, memory_threshold=75,
                                        storage_threshold=90, gpu_threshold=80,
-                                       disk_io_threshold=100, check_interval=10))
+                                       disk_io_threshold=disk_io_threshold, check_interval=10))
