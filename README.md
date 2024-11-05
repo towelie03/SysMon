@@ -6,3 +6,6 @@ For Server:
     Install the Requirements:
         pip install -r requirements.txt
         run: uvicorn server:app --reload
+
+For RabbitMQ:
+    docker run -d --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:4.0-management
