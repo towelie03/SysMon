@@ -4,6 +4,7 @@ import { Line, LineChart, ResponsiveContainer, YAxis } from "recharts";
 import { CpuInfoView } from "./cpu/cpu_info_view";
 import { MemoryInfoView } from "./memory/memory_info_view";
 import { RealtimeDataContext } from "./realtime/realtime_data_context";
+import { DiskInfoView } from "./disk/disk_info_view";
 
 const data = [
   {
@@ -74,12 +75,20 @@ export function SystemMonitorView() {
     ).toFixed(2)} GB (${obj.memory_percent}%)`;
   }
 
+  function getDiskActiveTime() {
+    var obj: any = realtimeData[realtimeData.length - 1];
+    if (obj === undefined) return "0";
+    return obj.disk_active_time;
+  }
+
   function renderPage() {
     switch (page) {
       case 0:
         return <CpuInfoView></CpuInfoView>;
       case 1:
         return <MemoryInfoView></MemoryInfoView>;
+      case 2:
+        return <DiskInfoView></DiskInfoView>
       default:
         return <CpuInfoView></CpuInfoView>;
     }
@@ -166,20 +175,24 @@ export function SystemMonitorView() {
             <LineChart
               width={200}
               height={100}
-              data={data}
+              data={realtimeData}
               className="bg-muted h-full rounded-lg"
             >
+              <YAxis domain={[0, 100]} hide />
               <Line
                 type="monotone"
-                dataKey="pv"
+                dataKey="disk_active_time"
                 stroke="#8884d8"
+                dot={false}
                 strokeWidth={2}
+                min={0}
+                max={100}
               />
             </LineChart>
           </ResponsiveContainer>
           <div className="w-[50%] pl-4 pt-2">
             <div className="font-semibold text-3xl">Disk 0</div>
-            <div className="mt-0 text-lg text-muted-foreground">SSD (5%)</div>
+            <div className="mt-0 text-lg text-muted-foreground">SSD ({getDiskActiveTime()}%)</div>
           </div>
         </div>
         <Separator></Separator>
