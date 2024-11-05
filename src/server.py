@@ -168,6 +168,8 @@ def get_all_realtime_data():
     realtime_tracking_data = {
         "throughput": Network.monitor_total_traffic(),
         "cpu_usage": CPU.get_cpu_usage(),
+        "cpu_frequency": CPU.get_cpu_frequency(),
+        "uptime": CPU.get_uptime(),
         "memory_usage": Memory.get_memory_usage(),
         "memory_total": Memory.get_memory_total(),
         "memory_percent": Memory.get_memory_percent(),

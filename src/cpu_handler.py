@@ -1,5 +1,6 @@
 import psutil
 import os
+import uptime
 
 class CPU:
 
@@ -73,6 +74,13 @@ class CPU:
         Returns the time spent by the CPU in different modes.
         """
         return psutil.cpu_times()._asdict()
+
+    @staticmethod
+    def get_uptime():
+        """
+        Returns the system uptime in seconds.
+        """
+        return uptime.uptime()
 
 def main():
     print("Overall CPU usage:")
