@@ -15,7 +15,7 @@ export function MemoryInfoView() {
   function getMemoryObj() {
     var obj: any = data[data.length - 1];
     if (obj === undefined) return {};
-    return obj
+    return obj;
   }
 
   return (
@@ -25,8 +25,16 @@ export function MemoryInfoView() {
           <AreaChart data={data} className="bg-popover rounded-lg">
             <defs>
               <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.8} />
-                <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                <stop
+                  offset="5%"
+                  stopColor="hsl(var(--primary))"
+                  stopOpacity={0.8}
+                />
+                <stop
+                  offset="95%"
+                  stopColor="hsl(var(--primary))"
+                  stopOpacity={0}
+                />
               </linearGradient>
             </defs>
             <XAxis hide />
@@ -47,35 +55,59 @@ export function MemoryInfoView() {
 
       <div className="flex flex-col gap-8 pr-56">
         <div>
-            <div className="text-4xl font-semibold pb-2">Utilization</div>
-            <div>{getMemoryObj().memory_percent || "Unknown"}%</div>
+          <div className="text-4xl font-semibold pb-2">Utilization</div>
+          <div>{getMemoryObj().memory_percent || "Unknown"}%</div>
         </div>
 
         <div>
-            <div className="text-4xl font-semibold pb-2">Virtual Memory</div>
-            <div>{(getMemoryObj().virtual_memory / 1024 / 1024 / 1024).toFixed(2) || "Unknown"} GB</div>
+          <div className="text-4xl font-semibold pb-2">Virtual Memory</div>
+          <div>
+            {(getMemoryObj().memory_total / 1024 / 1024 / 1024).toFixed(2) ||
+              "Unknown"}{" "}
+            GB
+          </div>
         </div>
 
         <div>
-            <div className="text-4xl font-semibold pb-2">Swap Memory</div>
-            <div>{(getMemoryObj().swap_memory / 1024 / 1024 / 1024).toFixed(2) || "Unknown"} GB</div>
+          <div className="text-4xl font-semibold pb-2">Swap Memory</div>
+          <div>
+            {(
+              (getMemoryObj().memory_swap?.total || 0) /
+              1024 /
+              1024 /
+              1024
+            ).toFixed(2) || "Unknown"}{" "}
+            GB
+          </div>
         </div>
 
         <div>
-            <div className="text-4xl font-semibold pb-2">Used</div>
-            <div>{(getMemoryObj().memory_usage / 1024 / 1024 / 1024).toFixed(2) || "Unknown"} GB</div>
+          <div className="text-4xl font-semibold pb-2">Used</div>
+          <div>
+            {(getMemoryObj().memory_usage / 1024 / 1024 / 1024).toFixed(2) ||
+              "Unknown"}{" "}
+            GB
+          </div>
         </div>
 
         <div>
-            <div className="text-4xl font-semibold pb-2">Available</div>
-            <div>{(getMemoryObj().memory_available / 1024 / 1024 / 1024).toFixed(2) || "Unknown"} GB</div>
+          <div className="text-4xl font-semibold pb-2">Available</div>
+          <div>
+            {(getMemoryObj().memory_available / 1024 / 1024 / 1024).toFixed(
+              2
+            ) || "Unknown"}{" "}
+            GB
+          </div>
         </div>
 
         <div>
-            <div className="text-4xl font-semibold pb-2">Total</div>
-            <div>{(getMemoryObj().memory_total / 1024 / 1024 / 1024).toFixed(2) || "Unknown"} GB</div>
+          <div className="text-4xl font-semibold pb-2">Total</div>
+          <div>
+            {(getMemoryObj().memory_total / 1024 / 1024 / 1024).toFixed(2) ||
+              "Unknown"}{" "}
+            GB
+          </div>
         </div>
-
       </div>
     </div>
   );
