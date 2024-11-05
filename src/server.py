@@ -168,7 +168,10 @@ def get_all_realtime_data():
     realtime_tracking_data = {
         "throughput": Network.monitor_total_traffic(),
         "cpu_usage": CPU.get_cpu_usage(),
+        "memory_usage": Memory.get_memory_usage(),
+        "memory_total": Memory.get_memory_total(),
+        "memory_percent": Memory.get_memory_percent(),
         "disk_active_time": Disk.get_disk_active_time_percentage(),
-        "gpu_usage": GPU.get_gpu_usage()
+        # "gpu_usage": GPU.get_gpu_usage()
     }
     return realtime_tracking_data
