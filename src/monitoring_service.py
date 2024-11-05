@@ -17,8 +17,8 @@ max_bandwidth_usage = 1e8
 
 cpu_usage_history = deque(maxlen=monitoring_duration // check_interval)
 ram_usage_history = deque(maxlen=monitoring_duration // check_interval)
-prev_bytes_sent = Network.get_bandwidth_usage().bytes_sent
-prev_bytes_recv = Network.get_bandwidth_usage().bytes_recv
+prev_bytes_sent = Network.get_bandwidth_usage()["bytes_sent"]
+prev_bytes_recv = Network.get_bandwidth_usage()["bytes_received"]
 
 def send_alert(alert_type, message):
     connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
@@ -46,9 +46,9 @@ def check_ram():
 def check_network():
     global prev_bytes_sent, prev_bytes_recv
     current_stats = Network.get_bandwidth_usage()
-    sent_in_interval = current_stats.bytes_sent - prev_bytes_sent
-    recv_in_interval = current_stats.bytes_recv - prev_bytes_recv
-    prev_bytes_sent, prev_bytes_recv = current_stats.bytes_sent, current_stats.bytes_recv
+    sent_in_interval = current_stats["bytes_sent"] - prev_bytes_sent
+    recv_in_interval = current_stats["bytes_received"] - prev_bytes_recv
+    prev_bytes_sent, prev_bytes_recv = current_stats["bytes_sent"], current_stats["bytes_received"]
     if sent_in_interval > max_bandwidth_usage or recv_in_interval > max_bandwidth_usage:
         send_alert("High Network Usage", f"Network spike detected")
         print("Sent high Network alert")
