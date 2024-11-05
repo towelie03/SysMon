@@ -62,6 +62,12 @@ export function SystemMonitorView() {
     return obj.cpu_usage;
   }
 
+  function getCpuFrequency() {
+    var obj: any = realtimeData[realtimeData.length - 1];
+    if (obj === undefined) return "0";
+    return obj.cpu_frequency.current.toFixed(0);
+  }
+
   function getMemoryPerc() {
     var obj: any = realtimeData[realtimeData.length - 1];
     if (obj === undefined) return "Unknown";
@@ -123,7 +129,7 @@ export function SystemMonitorView() {
           <div className="w-[50%] pl-4 pt-2">
             <div className="font-semibold text-3xl">CPU</div>
             <div className="mt-0 text-lg text-muted-foreground">
-              {getCpuPerc()}% 3.82Ghz
+              {getCpuPerc()}% {getCpuFrequency()}Mhz
             </div>
           </div>
         </div>

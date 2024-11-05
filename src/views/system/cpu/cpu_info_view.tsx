@@ -21,13 +21,24 @@ export function CpuInfoView() {
     return realtimeData[realtimeData.length - 1].cpu_usage;
   }
 
+  function getCpuFrequency() {
+    var obj: any = realtimeData[realtimeData.length - 1];
+    if (obj === undefined) return "0";
+    return obj.cpu_frequency.current.toFixed(0);
+  }
+
+  function getUptime() {
+    var obj: any = realtimeData[realtimeData.length - 1];
+    if (obj === undefined) return "0";
+    return obj.uptime.toFixed(0);
+  }
+
   useEffect(() => {
     async function asyncBridge() {
         const respone = await fetch("http://127.0.0.1:8000/cpu/all")
         const result = await respone.json()
 
         setCpuData(result)
-        console.log(result)
     }
 
     asyncBridge()
@@ -73,22 +84,22 @@ export function CpuInfoView() {
 
         <div>
             <div className="text-4xl font-semibold pb-2">Speed</div>
-            <div>Blah Blah</div>
+            <div>{getCpuFrequency()} Mhz</div>
         </div>
 
         <div>
-            <div className="text-4xl font-semibold pb-2">Processes</div>
-            <div>Blah Blah</div>
+            <div className="text-4xl font-semibold pb-2">Count</div>
+            <div>{cpu_data.cpu_count ?? 0}</div>
         </div>
 
         <div>
-            <div className="text-4xl font-semibold pb-2">Handles</div>
-            <div>Blah Blah</div>
+            <div className="text-4xl font-semibold pb-2">Temperature</div>
+            <div>{cpu_data.cpu_temperature ?? 0} °C</div>
         </div>
 
         <div>
             <div className="text-4xl font-semibold pb-2">Uptime</div>
-            <div>Blah Blah</div>
+            <div>{getUptime()} s</div>
         </div>
 
       </div>
