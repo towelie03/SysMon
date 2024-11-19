@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
 import { ProcessListView } from "./views/process/ProcessListView";
 import { SettingsView } from "./views/settings/SettingsView";
@@ -6,9 +6,27 @@ import { RealtimeDataProvider } from "./views/system/realtime/realtime_data_prov
 import { SystemMonitorView } from "./views/system/SystemMonitorView";
 import { ThemeContext } from "./theme_provider";
 import { cn } from "./lib/utils";
+import { Toaster } from "./components/ui/sonner";
+import useWebSocket, { ReadyState } from 'react-use-websocket';
+import { toast } from "sonner";
 
 function App() {
   let theme = useContext(ThemeContext);
+
+  const [socketUrl, setSocketUrl] = useState('ws://localhost:8000/notification');
+  const [messageHistory, setMessageHistory] = useState<MessageEvent<any>[]>([]);
+
+  const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl);
+
+  useEffect(() => {
+    if (lastMessage !== null) {
+      console.log(lastMessage)
+      let parsed_data = JSON.parse(lastMessage.data)
+
+      toast.message(parsed_data["title"], {description: parsed_data["msg"]})
+      setMessageHistory((prev) => prev.concat(lastMessage));
+    }
+  }, [lastMessage]);
 
   return (
     <div className={cn("bg-background w-screen h-screen p-4", theme.theme)}>
@@ -44,6 +62,7 @@ function App() {
           </TabsContent>
         </Tabs>
       </RealtimeDataProvider>
+      <Toaster expand/>
     </div>
   );
 }

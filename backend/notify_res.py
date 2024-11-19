@@ -16,6 +16,15 @@ class NotificationService:
         self.gpu_threshold = 80
         self.check_interval = 10
         self.task = None
+        self.listeners = []
+
+    def add_listener(self, l):
+        self.listeners.append(l)
+
+    async def notify_listeners(self, title, msg):
+        for i in self.listeners:
+            await i(title, msg)
+
 
     async def event_loop(self):
         while True:
@@ -54,40 +63,24 @@ class NotificationService:
 
         # Check CPU usage
         if cpu_usage > cpu_threshold:
+            await self.notify_listeners("CPU Usage Alert", f"CPU usage is at {cpu_usage}%")
             print(f"CPU usage is above threshold: {cpu_usage}%")
-            notification.notify(
-                title="CPU Usage Alert",
-                message=f"CPU usage is at {cpu_usage}%",
-                timeout=10,
-            )
 
         # Check Memory usage
         if memory_usage > memory_threshold:
+            await self.notify_listeners("Memory Usage Alert", f"Memory usage is at {memory_usage:.2f}%")
             print(f"Memory usage is above threshold: {memory_usage:.2f}%")
-            notification.notify(
-                title="Memory Usage Alert",
-                message=f"Memory usage is at {memory_usage:.2f}%",
-                timeout=10,
-            )
 
         # Check Disk usage
         if disk_usage > disk_threshold:
+            await self.notify_listeners("Disk Usage Alert", f"Disk usage is at {disk_usage}%")
             print(f"Disk usage is above threshold: {disk_usage}%")
-            notification.notify(
-                title="Disk Usage Alert",
-                message=f"Disk usage is at {disk_usage}%",
-                timeout=10,
-            )
 
         # Check Network usage
         if network_usage > network_threshold:
+            await self.notify_listeners("Network Usage Alert", f"Network usage is at {Network.bytes_convert(network_usage)}")
             print(
                 f"Network usage is above threshold: {Network.bytes_convert(network_usage)}"
-            )
-            notification.notify(
-                title="Network Usage Alert",
-                message=f"Network usage is at {Network.bytes_convert(network_usage)}",
-                timeout=10,
             )
 
 

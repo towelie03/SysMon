@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, WebSocket
 from proccess_handler import Process
 from cpu_handler import CPU
 from mem_handler import Memory
@@ -6,6 +6,7 @@ from network_handler import Network
 from disk_handler import Disk
 from nvidia_gpu_handler import GPU
 from fastapi.middleware.cors import CORSMiddleware
+from notify_res import NotificationService
 
 app = FastAPI()
 
@@ -19,6 +20,30 @@ app.add_middleware(
     allow_methods=["*"],  # Allows all HTTP methods (GET, POST, etc.)
     allow_headers=["*"],  # Allows all headers
 )
+
+notification_service = NotificationService()
+notification_service.start()
+
+
+@app.websocket("/notification")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+
+    async def on_event(title, msg):
+        await websocket.send_json({"title": title, "msg": msg})
+
+    notification_service.add_listener(on_event)
+
+    try:
+        while True:
+            # Await incoming messages (e.g., keep-alive pings)
+            data = await websocket.receive_text()
+            # Optionally handle incoming messages from the client
+            print(f"Received from client: {data}")
+    except:
+        print("WebSocket connection closed")
+        # Cleanup: Remove the listener when the client disconnects
+        notification_service.listeners.remove(on_event)
 
 
 @app.get("/processes", response_model=list)
