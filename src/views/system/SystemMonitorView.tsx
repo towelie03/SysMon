@@ -5,6 +5,7 @@ import { CpuInfoView } from "./cpu/cpu_info_view";
 import { MemoryInfoView } from "./memory/memory_info_view";
 import { RealtimeDataContext } from "./realtime/realtime_data_context";
 import { DiskInfoView } from "./disk/disk_info_view";
+import { NetworkInfoView } from "./network/network_info_view";
 
 const data = [
   {
@@ -85,6 +86,12 @@ export function SystemMonitorView() {
     return obj.disk_active_time;
   }
 
+  function getNetworkSent() {
+    var obj: any = realtimeData[realtimeData.length - 1];
+    if (obj === undefined) return "0";
+    return (obj.throughput.sent / 1024).toFixed(0);
+  }
+
   function renderPage() {
     switch (page) {
       case 0:
@@ -92,7 +99,9 @@ export function SystemMonitorView() {
       case 1:
         return <MemoryInfoView></MemoryInfoView>;
       case 2:
-        return <DiskInfoView></DiskInfoView>
+        return <DiskInfoView></DiskInfoView>;
+      case 3:
+        return <NetworkInfoView></NetworkInfoView>;
       default:
         return <CpuInfoView></CpuInfoView>;
     }
@@ -196,7 +205,9 @@ export function SystemMonitorView() {
           </ResponsiveContainer>
           <div className="w-[50%] pl-4 pt-2">
             <div className="font-semibold text-3xl">Disk 0</div>
-            <div className="mt-0 text-lg text-muted-foreground">SSD ({getDiskActiveTime()}%)</div>
+            <div className="mt-0 text-lg text-muted-foreground">
+              SSD ({getDiskActiveTime()}%)
+            </div>
           </div>
         </div>
         <Separator></Separator>
@@ -210,20 +221,34 @@ export function SystemMonitorView() {
           <ResponsiveContainer height="100%" width="50%">
             <LineChart
               width={200}
-              data={data}
+              height={100}
+              data={realtimeData}
               className="bg-muted h-full rounded-lg"
             >
+              <YAxis domain={[0, 100_000]} hide />
               <Line
                 type="monotone"
-                dataKey="pv"
-                stroke="hsl(var(--primary))"
+                dataKey="throughput.sent"
+                stroke="hsl(var(--chart-1))"
+                dot={false}
                 strokeWidth={2}
+                min={0}
+                max={100_000}
+              />
+              <Line
+                type="monotone"
+                dataKey="throughput.recv"
+                stroke="hsl(var(--chart-2))"
+                dot={false}
+                strokeWidth={2}
+                min={0}
+                max={100_000}
               />
             </LineChart>
           </ResponsiveContainer>
           <div className="w-[50%] pl-4 pt-2">
             <div className="font-semibold text-3xl">Network</div>
-            <div className="mt-0 text-lg text-muted-foreground">20 Kbps</div>
+            <div className="mt-0 text-lg text-muted-foreground">{getNetworkSent()} Kbps</div>
           </div>
         </div>
         <Separator></Separator>
