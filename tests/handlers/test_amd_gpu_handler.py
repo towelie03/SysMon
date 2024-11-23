@@ -17,10 +17,12 @@ def no_gpus():
     """Fixture for no detected GPUs."""
     return None
 
+
 @pytest.fixture
 def one_gpu():
     """Fixture for one detected GPU."""
     return [MockGPU(0, "AMD RX 580", 0.5, 70, 2000, 4000)]
+
 
 @pytest.fixture
 def multiple_gpus():
@@ -30,12 +32,14 @@ def multiple_gpus():
         MockGPU(1, "AMD RX 5700", 0.8, 65, 3000, 8000),
     ]
 
+
 @pytest.fixture
 def mock_detect_gpus(monkeypatch):
     """Fixture to mock GPU detection."""
     def _mock(gpu_list):
         monkeypatch.setattr("pyamdgpuinfo.detect_gpus", lambda: gpu_list)
     return _mock
+
 
 # Utility function for assertions
 def assert_result_or_message(result, expected_message, expected_data=None):
@@ -66,7 +70,6 @@ def test_get_gpu_count(mock_detect_gpus, gpu_fixture_name, request):
     }[gpu_fixture_name]
     assert AMDGPU.get_gpu_count() == expected_count
 
-
 @gpu_platforms
 def test_get_gpu_usage(mock_detect_gpus, gpu_fixture_name, request):
     """Test get_gpu_usage for various scenarios."""
@@ -79,7 +82,6 @@ def test_get_gpu_usage(mock_detect_gpus, gpu_fixture_name, request):
     }[gpu_fixture_name]
     assert_result_or_message(AMDGPU.get_gpu_usage(), "No AMD GPUs found.", expected_result)
 
-
 @gpu_platforms
 def test_get_gpu_temperature(mock_detect_gpus, gpu_fixture_name, request):
     """Test get_gpu_temperature for various scenarios."""
@@ -91,7 +93,6 @@ def test_get_gpu_temperature(mock_detect_gpus, gpu_fixture_name, request):
         "multiple_gpus": {0: 70, 1: 65},
     }[gpu_fixture_name]
     assert_result_or_message(AMDGPU.get_gpu_temperature(), "No AMD GPUs found.", expected_result)
-
 
 @gpu_platforms
 def test_get_gpu_memory_usage(mock_detect_gpus, gpu_fixture_name, request):
@@ -111,3 +112,7 @@ def test_get_gpu_memory_usage(mock_detect_gpus, gpu_fixture_name, request):
         "No AMD GPUs found.",
         expected_result,
     )
+
+
+if __name__ == "__main__":
+    pytest.main()
