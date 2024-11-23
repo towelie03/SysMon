@@ -139,3 +139,6 @@ def test_get_uptime(mock_uptime):
     """Test get_uptime."""
     result = CPU.get_uptime()
     assert result == 3600.0
+
+if __name__ == "__main__":
+    pytest.main()
