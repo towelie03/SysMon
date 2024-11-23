@@ -7,8 +7,11 @@ from disk_handler import Disk
 from nvidia_gpu_handler import GPU
 from fastapi.middleware.cors import CORSMiddleware
 from notify_res import NotificationService
-
+from database import Database
+from UserSettings import UserSettings 
 app = FastAPI()
+
+db = Database("settings.db")
 
 # CORS configuration
 origins = ["*"]  # Allow all origins
@@ -230,3 +233,34 @@ def get_all_realtime_data():
         # "gpu_usage": GPU.get_gpu_usage()
     }
     return realtime_tracking_data
+
+
+@app.get("/settings", response_model=UserSettings)
+def get_user_settings():
+    """
+    Endpoint to retrieve the current user settings.
+    """
+    settings = db.get_thresholds()
+    if settings is None:
+        raise HTTPException(status_code=404, detail="Settings not found.")
+    return settings
+
+
+@app.post("/settings", response_model=UserSettings)
+def save_user_settings(settings: UserSettings):
+    """
+    Endpoint to save or update the user settings.
+    """
+    try:
+        db.update_thresholds(
+            cpu_threshold=settings.cpu_threshold,
+            memory_threshold=settings.memory_threshold,
+            disk_threshold=settings.disk_threshold,
+            network_threshold=settings.network_threshold,
+            gpu_threshold=settings.gpu_threshold,
+            check_interval=settings.check_interval,
+            theme=settings.theme
+        )
+        return settings
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
