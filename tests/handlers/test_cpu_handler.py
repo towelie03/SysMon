@@ -3,7 +3,7 @@ import psutil
 import os
 import io
 from collections import namedtuple
-from backend.cpu_handler import CPU  # Corrected import
+from backend.cpu_handler import CPU
 
 # Fixtures for mocking
 @pytest.fixture
@@ -76,11 +76,6 @@ def mock_cpu_times(monkeypatch):
             guest_nice=0.0
         )
     monkeypatch.setattr(psutil, "cpu_times", _mock)
-
-
-
-
-
 
 @pytest.fixture
 def mock_uptime(monkeypatch):
