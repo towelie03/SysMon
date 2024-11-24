@@ -18,7 +18,7 @@ class Database:
                 network_threshold INTEGER DEFAULT 1000000,
                 gpu_threshold INTEGER DEFAULT 80,
                 check_interval INTEGER DEFAULT 10,
-                theme TEXT DEFAULT 'catpuccin'
+                theme TEXT DEFAULT 'Catpuccin'
             )
         """)
         self.connection.commit()

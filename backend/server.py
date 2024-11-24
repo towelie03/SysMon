@@ -252,15 +252,15 @@ def save_user_settings(settings: UserSettings):
     Endpoint to save or update the user settings.
     """
     try:
-        db.update_thresholds(
-            cpu_threshold=settings.cpu_threshold,
-            memory_threshold=settings.memory_threshold,
-            disk_threshold=settings.disk_threshold,
-            network_threshold=settings.network_threshold,
-            gpu_threshold=settings.gpu_threshold,
-            check_interval=settings.check_interval,
-            theme=settings.theme
-        )
+        db.update_thresholds(settings)
+
+        notification_service.cpu_threshold = settings.cpu_threshold
+        notification_service.memory_threshold = settings.memory_threshold
+        notification_service.disk_threshold = settings.disk_threshold
+        notification_service.network_threshold = settings.network_threshold
+        notification_service.gpu_threshold = settings.gpu_threshold
+        notification_service.check_interval = settings.check_interval
+
         return settings
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

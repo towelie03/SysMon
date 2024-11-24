@@ -7,4 +7,4 @@ class UserSettings(BaseModel):
     network_threshold: int = 1000000
     gpu_threshold: int = 80
     check_interval: int = 10
-    theme: str = "catpuccin"
+    theme: str = "Catpuccin"
