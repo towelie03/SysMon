@@ -19,13 +19,13 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -r backend/requirements.txt
         pip install pytest
-        # Install other dependencies your project requires
-        # e.g., pip install -r requirements.txt
+        # Install both root and backend requirements
 
     - name: Run tests
+      env:
+        PYTHONPATH: ${{ github.workspace }}  # Set the repository root as the Python path
       run: |
         pytest tests
-      env:
-        CI: true
-
