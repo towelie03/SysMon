@@ -25,6 +25,13 @@ app.add_middleware(
 )
 
 notification_service = NotificationService()
+th = db.get_thresholds()
+notification_service.cpu_threshold = th.cpu_threshold
+notification_service.memory_threshold = th.memory_threshold
+notification_service.disk_threshold = th.disk_threshold
+notification_service.network_threshold = th.network_threshold
+notification_service.gpu_threshold = th.gpu_threshold
+notification_service.check_interval = th.check_interval
 notification_service.start()
 
 
