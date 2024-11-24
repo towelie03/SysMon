@@ -3,6 +3,3 @@ mysql-connector-python==8.0.26
 pysqlite3==0.4.6
 pytest==6.2.5
 uvicorn==0.15.0
-psutil==6.0.0
-GPUtil==1.4.0
-
