@@ -5,6 +5,7 @@ fastapi==0.115.0
 GPUtil==1.4.0
 h11==0.14.0
 idna==3.10
+plyer==2.1.0
 psutil==6.0.0
 pyamdgpuinfo==2.1.6
 pydantic==2.9.2

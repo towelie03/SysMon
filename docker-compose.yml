@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  web:
+    image: python:3.9
+    container_name: sysmon_web
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: >
+      sh -c "pip install --no-cache-dir -r requirements.txt && 
+             uvicorn src.main:app --host 0.0.0.0 --port 8000"
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+  
+  rabbitmq:
+    image: rabbitmq:4.0-management
+    container_name: sysmon_rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    
+  db:
+    image: mysql:8.0
+    container_name: sysmon_db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpasswd
+      MYSQL_DATABASE: settings
+      MYSQL_USER: sysmon_user
+      MYSQL_PASSWORD: sysmonpasswd
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+volumes:
+  sysmon_data:
+  mysql_data:
