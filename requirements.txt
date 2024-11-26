@@ -8,3 +8,4 @@ schedule
 psutil
 uptime
 GPUtil
+pika
