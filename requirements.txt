@@ -1,5 +1,10 @@
 fastapi==0.70.0
 mysql-connector-python==8.0.26
-pysqlite3==0.4.6
+pysqlite3
 pytest==6.2.5
 uvicorn==0.15.0
+requests
+schedule
+psutil
+uptime
+GPUtil

@@ -1,10 +1,9 @@
-from plyer import notification
 import asyncio
-from cpu_handler import CPU
-from mem_handler import Memory
-from disk_handler import Disk
-from network_handler import Network
-from nvidia_gpu_handler import GPU
+from .cpu_handler import CPU
+from .mem_handler import Memory
+from .disk_handler import Disk
+from .network_handler import Network
+from .nvidia_gpu_handler import GPU
 
 
 class NotificationService:

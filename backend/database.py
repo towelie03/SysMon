@@ -1,5 +1,5 @@
 import sqlite3
-from UserSettings import UserSettings 
+from .UserSettings import UserSettings 
 class Database:
     def __init__(self, db_name="settings.db"):
         """Initialize the database and create the settings table."""
