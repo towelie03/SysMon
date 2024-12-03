@@ -23,7 +23,7 @@ jobs:
         # Install both root and backend requirements
 
     - name: Run Flake8 Linter
-        run: flake8 backend/
+      run:  flake8 backend/
     
     - name: Run tests
       env:
