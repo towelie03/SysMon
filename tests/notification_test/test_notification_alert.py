@@ -104,7 +104,7 @@ def test_send_alert(mock_strftime, mock_blocking_connection):
     mock_connection.channel.return_value = mock_channel
 
     # Call the function
-    send_alert("High CPU Usage", "CPU usage exceeded 90% for 5 minutes.")
+    send_alert("High CPU Usage", "CPU usage exceeded 90% for 300s.")
 
     # Assert queue was declared
     mock_channel.queue_declare.assert_called_once_with(
@@ -118,7 +118,7 @@ def test_send_alert(mock_strftime, mock_blocking_connection):
         body=json.dumps(
             {
                 "type": "High CPU Usage",
-                "message": "CPU usage exceeded 90% for 5 minutes.",
+                "message": "CPU usage exceeded 90% for 300s.",
                 "timestamp": "2024-11-25 12:00:00",
             }
         ),
