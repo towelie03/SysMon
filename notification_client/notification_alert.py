@@ -7,15 +7,50 @@ import requests
 from .notification_api_handler import fetch_cpu_usage,fetch_memory_percent,fetch_network_bandwidth
 from collections import deque
 
-# Monitoring parameters and RabbitMQ setup as before
-monitoring_duration = 5 #5 * 60
-check_interval = 5
-high_cpu_threshold = 85
-high_ram_threshold = 90
-max_bandwidth_usage = 1e8
+# Default thresholds (fallback if the API call fails)
+default_settings = {
+    "high_cpu_threshold": 85,
+    "high_ram_threshold": 90,
+    "max_bandwidth_usage": 1e8,
+    "check_interval": 5,
+    "monitoring_duration": 5*60
+}
 
-cpu_usage_history = deque(maxlen=monitoring_duration // check_interval)
-ram_usage_history = deque(maxlen=monitoring_duration // check_interval)
+# Key mapping from API response to internal settings
+key_mapping = {
+    "cpu_threshold": "high_cpu_threshold",
+    "memory_threshold": "high_ram_threshold",
+    "network_threshold": "max_bandwidth_usage",
+    "check_interval": "check_interval",
+}
+
+settings = default_settings.copy()
+
+cpu_usage_history = deque(maxlen=settings["monitoring_duration"] // settings["check_interval"])
+ram_usage_history = deque(maxlen=settings["monitoring_duration"] // settings["check_interval"])
+
+def fetch_settings():
+    global settings, cpu_usage_history, ram_usage_history
+    try:
+        response = requests.get("http://localhost:8000/settings")
+        response.raise_for_status()
+        updated_settings = response.json()
+        
+         # Map API keys to internal keys
+        for api_key, internal_key in key_mapping.items():
+            if api_key in updated_settings:
+                if not settings[internal_key] == updated_settings[api_key]:
+                    settings[internal_key] == updated_settings[api_key]
+                                                          
+        # print(f"Settings updated: {settings}")
+        
+         # Reinitialize histories if check_interval or monitoring_duration changes
+        cpu_usage_history = deque(maxlen=settings["monitoring_duration"] // settings["check_interval"])
+        ram_usage_history = deque(maxlen=settings["monitoring_duration"] // settings["check_interval"])
+        
+    except Exception as e:
+        print(f"Failed to fetch settings: {e}. Using default settings.")
+        
 
 # Fetch initial network statistics from the server
 initial_bandwidth_stats = fetch_network_bandwidth()
@@ -41,7 +76,7 @@ def send_alert(alert_type, message):
 def check_cpu():
     cpu_usage = fetch_cpu_usage()
     cpu_usage_history.append(cpu_usage)
-    if len(cpu_usage_history) == cpu_usage_history.maxlen and all(usage > high_cpu_threshold for usage in cpu_usage_history):
+    if len(cpu_usage_history) == cpu_usage_history.maxlen and all(usage > settings["high_cpu_threshold"] for usage in cpu_usage_history):
         print(cpu_usage_history.maxlen)
         send_alert("High CPU Usage", f"CPU usage has been consistently high for the past 5 minutes")
         print("Sent high CPU alert")
@@ -49,7 +84,7 @@ def check_cpu():
 def check_ram():
     ram_usage = fetch_memory_percent()
     ram_usage_history.append(ram_usage)
-    if len(ram_usage_history) == ram_usage_history.maxlen and all(usage > high_ram_threshold for usage in ram_usage_history):
+    if len(ram_usage_history) == ram_usage_history.maxlen and all(usage > settings["high_ram_threshold"] for usage in ram_usage_history):
         send_alert("High RAM Usage", f"RAM usage has been consistently high for the past 5 minutes")
         print(f"Sent high RAM alert {ram_usage}")
         
@@ -61,7 +96,7 @@ def check_network():
         recv_in_interval = bandwidth_usage["bytes_received"] - prev_bytes_recv
         prev_bytes_sent, prev_bytes_recv = bandwidth_usage["bytes_sent"], bandwidth_usage["bytes_received"]
         
-        if sent_in_interval > max_bandwidth_usage or recv_in_interval > max_bandwidth_usage:
+        if sent_in_interval > settings["max_bandwidth_usage"] or recv_in_interval > settings["max_bandwidth_usage"]:
             send_alert("High Network Usage", "Network spike detected")
             print("Sent high network alert")
     else:
@@ -69,10 +104,16 @@ def check_network():
 
 
 def start_monitoring():
-    schedule.every(check_interval).seconds.do(check_cpu)
-    schedule.every(check_interval).seconds.do(check_ram)
-    schedule.every(check_interval).seconds.do(check_network)
+    
+    fetch_settings()
+    
+    schedule.every(settings["check_interval"]).seconds.do(check_cpu)
+    schedule.every(settings["check_interval"]).seconds.do(check_ram)
+    schedule.every(settings["check_interval"]).seconds.do(check_network)
 
+    # Periodically refresh settings from the API
+    schedule.every(60).seconds.do(fetch_settings)
+    
     while True:
         schedule.run_pending()
         time.sleep(1)

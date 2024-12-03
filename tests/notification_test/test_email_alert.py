@@ -1,6 +1,9 @@
 import pytest
 from unittest.mock import patch, Mock
 import json
+import os
+os.environ["RECEIVER_EMAIL"] = "mock_receiver@example.com"
+
 from notification_client.email_alert import send_email_alert, callback
 
 
@@ -8,7 +11,7 @@ from notification_client.email_alert import send_email_alert, callback
 @patch("notification_client.email_alert.SMTP_PORT", 1025)
 @patch("notification_client.email_alert.SENDER_EMAIL", "mock_sender@example.com")
 @patch("notification_client.email_alert.SENDER_PASSWORD", "mock_password")
-@patch("notification_client.email_alert.RECIEVER_EMAIL", "mock_receiver@example.com")
+@patch("notification_client.email_alert.RECEIVER_EMAIL", "mock_receiver@example.com")
 @patch("notification_client.email_alert.smtplib.SMTP")
 def test_send_email_alert(mock_smtp):
     """
@@ -41,7 +44,7 @@ def test_send_email_alert(mock_smtp):
 @patch("notification_client.email_alert.SMTP_PORT", 1025)
 @patch("notification_client.email_alert.SENDER_EMAIL", "mock_sender@example.com")
 @patch("notification_client.email_alert.SENDER_PASSWORD", "mock_password")
-@patch("notification_client.email_alert.RECIEVER_EMAIL", "mock_receiver@example.com")
+@patch("notification_client.email_alert.RECEIVER_EMAIL", "mock_receiver@example.com")
 @patch("notification_client.email_alert.send_email_alert")
 def test_callback(mock_send_email_alert):
     """
