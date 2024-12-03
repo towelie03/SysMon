@@ -1,14 +1,14 @@
 from fastapi import FastAPI, HTTPException, WebSocket
-from proccess_handler import Process
-from cpu_handler import CPU
-from mem_handler import Memory
-from network_handler import Network
-from disk_handler import Disk
-from nvidia_gpu_handler import GPU
+from .proccess_handler import Process
+from .cpu_handler import CPU
+from .mem_handler import Memory
+from .network_handler import Network
+from .disk_handler import Disk
+from .nvidia_gpu_handler import GPU
 from fastapi.middleware.cors import CORSMiddleware
-from notify_res import NotificationService
-from database import Database
-from UserSettings import UserSettings 
+from .notify_res import NotificationService
+from .database import Database
+from .UserSettings import UserSettings 
 app = FastAPI()
 
 db = Database("settings.db")
@@ -193,6 +193,10 @@ def get_bandwidth_usage():
         "ipv6": Network.get_primary_ipv6(),
         "type": Network.get_primary_connection_type(),
     }
+    
+@app.get("/network/bandwidth")
+def get_bandwidth_usage():
+    return {"bandwidth_usage": Network.get_bandwidth_usage()}
 
 
 @app.get("/disk/all")
