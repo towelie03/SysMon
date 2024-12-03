@@ -28,7 +28,7 @@ class Database:
         if self.cursor.fetchone()[0] == 0:
             self.cursor.execute("""
                 INSERT INTO user_settings (cpu_threshold, memory_threshold, disk_threshold, network_threshold, gpu_threshold, check_interval, theme)
-                VALUES (80, 80, 80, 1000000, 80, 10, 'catpuccin')
+                VALUES (80, 80, 80, 1000000, 80, 10, 'Catpuccin')
             """)
             self.connection.commit()
 
@@ -73,7 +73,7 @@ class Database:
         """Retrieve the current theme."""
         self.cursor.execute("SELECT theme FROM user_settings LIMIT 1")
         row = self.cursor.fetchone()
-        return row[0] if row else 'catpuccin'
+        return row[0] if row else 'Catpuccin'
 
     def close(self):
         """Close the database connection."""
