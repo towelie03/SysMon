@@ -77,11 +77,11 @@ class NotificationService:
             print(f"Disk usage is above threshold: {disk_usage}%")
 
         # Check Network usage
-        if network_usage > network_threshold:
-            await self.notify_listeners("Network Usage Alert", f"Network usage is at {Network.bytes_convert(network_usage)}")
-            print(
-                f"Network usage is above threshold: {Network.bytes_convert(network_usage)}"
-            )
+        # if network_usage > network_threshold:
+        #     await self.notify_listeners("Network Usage Alert", f"Network usage is at {Network.bytes_convert(network_usage)}")
+        #     print(
+        #         f"Network usage is above threshold: {Network.bytes_convert(network_usage)}"
+        #     )
 
 
     def start(self):

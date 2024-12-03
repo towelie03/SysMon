@@ -7,23 +7,36 @@ import { SystemMonitorView } from "./views/system/SystemMonitorView";
 import { ThemeContext } from "./theme_provider";
 import { cn } from "./lib/utils";
 import { Toaster } from "./components/ui/sonner";
-import useWebSocket, { ReadyState } from 'react-use-websocket';
+import useWebSocket, { ReadyState } from "react-use-websocket";
 import { toast } from "sonner";
 
 function App() {
   let theme = useContext(ThemeContext);
 
-  const [socketUrl, setSocketUrl] = useState('ws://localhost:8000/notification');
+  const [socketUrl, setSocketUrl] = useState(
+    "ws://localhost:8000/notification"
+  );
   const [messageHistory, setMessageHistory] = useState<MessageEvent<any>[]>([]);
 
   const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl);
 
   useEffect(() => {
     if (lastMessage !== null) {
-      console.log(lastMessage)
-      let parsed_data = JSON.parse(lastMessage.data)
+      console.log(lastMessage);
+      let parsed_data = JSON.parse(lastMessage.data);
 
-      toast.message(parsed_data["title"], {description: parsed_data["msg"]})
+      toast.message(parsed_data["title"], { description: parsed_data["msg"] });
+
+      Notification.requestPermission().then((result) => {
+        let n = new Notification(parsed_data["title"], {
+          body: parsed_data["msg"],
+        });
+
+        setTimeout(() => {
+          n.close()
+        }, 4000)
+      });
+
       setMessageHistory((prev) => prev.concat(lastMessage));
     }
   }, [lastMessage]);
@@ -62,7 +75,7 @@ function App() {
           </TabsContent>
         </Tabs>
       </RealtimeDataProvider>
-      <Toaster expand/>
+      <Toaster expand />
     </div>
   );
 }
