@@ -26,7 +26,7 @@ def test_high_cpu_alert(mock_send_alert, mock_fetch_cpu_usage, mock_cpu_usage_hi
 
     # Assert send_alert was called
     mock_send_alert.assert_called_once_with(
-        "High CPU Usage", "CPU usage has been consistently high for the past 5 minutes"
+        "High CPU Usage", "CPU usage has been consistently high for the past 300s"
     )
 
     # Assert that the mocked cpu_usage_history was updated
@@ -52,7 +52,7 @@ def test_high_ram_alert(
 
     # Assert send_alert was called
     mock_send_alert.assert_called_once_with(
-        "High RAM Usage", "RAM usage has been consistently high for the past 5 minutes"
+        "High RAM Usage", "RAM usage has been consistently high for the past 300s"
     )
 
     # Assert that the mocked ram_usage_history was updated
@@ -130,7 +130,7 @@ def test_send_alert(mock_strftime, mock_blocking_connection):
 
     # Verify correct print output
     with patch("builtins.print") as mock_print:
-        send_alert("High CPU Usage", "CPU usage exceeded 90% for 5 minutes.")
+        send_alert("High CPU Usage", "CPU usage exceeded 90% for 300s.")
         mock_print.assert_called_once_with(
-            "Alert sent to queue: {'type': 'High CPU Usage', 'message': 'CPU usage exceeded 90% for 5 minutes.', 'timestamp': '2024-11-25 12:00:00'}"
+            "Alert sent to queue: {'type': 'High CPU Usage', 'message': 'CPU usage exceeded 90% for 300s.', 'timestamp': '2024-11-25 12:00:00'}"
         )

@@ -49,7 +49,7 @@ jobs:
 
       # Step 4: Wait for Services to Initialize
       - name: Wait for services to be ready
-        run: sleep 10
+        run: sleep 30
 
       # Step 5: Validate Frontend with curl
       - name: Check Frontend Service
