@@ -25,7 +25,7 @@ SysMon is a system monitoring application that tracks CPU, memory, disk, network
    ```sh
    git clone https://github.com/towelie03/SysMon.git
    cd SysMon
-
-   docker-compose up --build
+   echo "RECEIVER_EMAIL=YOUR_EMAIL" > .env
+   docker-compose up
    ```
 

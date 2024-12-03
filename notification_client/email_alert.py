@@ -1,6 +1,7 @@
 import pika
 import json
 import smtplib
+import os
 from email.mime.text import MIMEText
 
 print("Before SMTP initialization")
@@ -10,7 +11,10 @@ SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
 SENDER_EMAIL = "sysmon7082@gmail.com"
 SENDER_PASSWORD = "ixlmehzicmyxjryj"  
-RECIEVER_EMAIL = SENDER_EMAIL
+RECEIVER_EMAIL = os.getenv("RECEIVER_EMAIL")
+
+if not RECEIVER_EMAIL:
+    raise ValueError("Receiver email not provided. Set RECEIVER_EMAIL environment variable.")
 
 def send_email_alert(subject, message, recipient_email):
     # Create the email content
@@ -37,7 +41,7 @@ def callback(ch, method, prop, body):
     # Prepare email details
     subject = f"System Alert: {alert_type}"
     email_message = f"Time: {timestamp}\n\nAlert: {alert_type}\n\nDetails: {message}"
-    recipient_email = RECIEVER_EMAIL  # Replace with actual recipient email
+    recipient_email = RECEIVER_EMAIL  # Replace with actual recipient email
 
     # Send the email alert
     send_email_alert(subject, email_message, recipient_email)

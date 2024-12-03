@@ -12,8 +12,9 @@ services:
              uvicorn backend.server:app --host 0.0.0.0 --port 8000"
     ports:
       - "8000:8000"
-    depends_on:
-      - db
+    pid: "host"
+    # depends_on:
+    #   - db
   
   rabbitmq:
     image: rabbitmq:4.0-management
@@ -21,19 +22,49 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
-    
-  db:
-    image: mysql:8.0
-    container_name: sysmon_db
-    environment:
-      MYSQL_ROOT_PASSWORD: rootpasswd
-      MYSQL_DATABASE: settings
-      MYSQL_USER: sysmon_user
-      MYSQL_PASSWORD: sysmonpasswd
+  
+  sysmon_notifier:
+    image: python:3.9  
+    container_name: sysmon_notifier
+    working_dir: /app
     volumes:
-      - mysql_data:/var/lib/mysql
+      - .:/app  
+    environment:
+      - RECEIVER_EMAIL=${RECEIVER_EMAIL}  # Email from .env file or inline
+    command: >
+      sh -c "
+      pip install --no-cache-dir -r requirements.txt &&
+      python3 run_notification_client.py
+      "
+    depends_on:
+      - web
+
+  frontend:
+    image: node:23.3.0-alpine3.19
+    working_dir: /app      
+    volumes:
+      - ./frontend:/app    
     ports:
-      - "3306:3306"
+      - "4173:4173"        
+    command: >
+      sh -c "npm ci &&
+             npm run build &&
+             npm run preview"
+    depends_on:
+      - web
+
+  # db:
+  #   image: mysql:8.0
+  #   container_name: sysmon_db
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: rootpasswd
+  #     MYSQL_DATABASE: settings
+  #     MYSQL_USER: sysmon_user
+  #     MYSQL_PASSWORD: sysmonpasswd
+  #   volumes:
+  #     - mysql_data:/var/lib/mysql
+  #   ports:
+  #     - "3306:3306"
 
 volumes:
   sysmon_data:
