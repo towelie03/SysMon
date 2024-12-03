@@ -1,7 +1,8 @@
 import psutil
 
+
 class Memory:
-    
+
     @staticmethod
     def get_virtual_memory():
         """
@@ -9,13 +10,13 @@ class Memory:
         """
         mem = psutil.virtual_memory()
         return {
-            'total': mem.total,
-            'available': mem.available,
-            'used': mem.used,
-            'free': mem.free,
-            'percent': mem.percent
+            "total": mem.total,
+            "available": mem.available,
+            "used": mem.used,
+            "free": mem.free,
+            "percent": mem.percent,
         }
-    
+
     @staticmethod
     def get_swap_memory():
         """
@@ -23,14 +24,14 @@ class Memory:
         """
         swap = psutil.swap_memory()
         return {
-            'total': swap.total,
-            'used': swap.used,
-            'free': swap.free,
-            'percent': swap.percent,
-            'sin': swap.sin,
-            'sout': swap.sout
+            "total": swap.total,
+            "used": swap.used,
+            "free": swap.free,
+            "percent": swap.percent,
+            "sin": swap.sin,
+            "sout": swap.sout,
         }
-    
+
     @staticmethod
     def get_memory_percent():
         """
@@ -59,6 +60,7 @@ class Memory:
         """
         return psutil.virtual_memory().total
 
+
 def main():
     print("Virtual Memory:")
     print(Memory.get_virtual_memory())
@@ -77,6 +79,7 @@ def main():
 
     print("\nTotal Memory:")
     print(f"{Memory.get_memory_total()} bytes")
+
 
 if __name__ == "__main__":
     main()

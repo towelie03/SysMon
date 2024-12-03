@@ -3,7 +3,6 @@ from .cpu_handler import CPU
 from .mem_handler import Memory
 from .disk_handler import Disk
 from .network_handler import Network
-from .nvidia_gpu_handler import GPU
 
 
 class NotificationService:
@@ -17,13 +16,12 @@ class NotificationService:
         self.task = None
         self.listeners = []
 
-    def add_listener(self, l):
-        self.listeners.append(l)
+    def add_listener(self, listener):
+        self.listeners.append(listener)
 
     async def notify_listeners(self, title, msg):
         for i in self.listeners:
             await i(title, msg)
-
 
     async def event_loop(self):
         while True:
@@ -62,17 +60,23 @@ class NotificationService:
 
         # Check CPU usage
         if cpu_usage > cpu_threshold:
-            await self.notify_listeners("CPU Usage Alert", f"CPU usage is at {cpu_usage}%")
+            await self.notify_listeners(
+                "CPU Usage Alert", f"CPU usage is at {cpu_usage}%"
+            )
             print(f"CPU usage is above threshold: {cpu_usage}%")
 
         # Check Memory usage
         if memory_usage > memory_threshold:
-            await self.notify_listeners("Memory Usage Alert", f"Memory usage is at {memory_usage:.2f}%")
+            await self.notify_listeners(
+                "Memory Usage Alert", f"Memory usage is at {memory_usage:.2f}%"
+            )
             print(f"Memory usage is above threshold: {memory_usage:.2f}%")
 
         # Check Disk usage
         if disk_usage > disk_threshold:
-            await self.notify_listeners("Disk Usage Alert", f"Disk usage is at {disk_usage}%")
+            await self.notify_listeners(
+                "Disk Usage Alert", f"Disk usage is at {disk_usage}%"
+            )
             print(f"Disk usage is above threshold: {disk_usage}%")
 
         # Check Network usage
@@ -81,7 +85,6 @@ class NotificationService:
         #     print(
         #         f"Network usage is above threshold: {Network.bytes_convert(network_usage)}"
         #     )
-
 
     def start(self):
         self.stop()
@@ -93,6 +96,7 @@ class NotificationService:
 
 
 if __name__ == "__main__":
+
     async def run():
         service = NotificationService()
         service.start()

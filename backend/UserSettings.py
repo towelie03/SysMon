@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+
 class UserSettings(BaseModel):
     cpu_threshold: int = 80
     memory_threshold: int = 80

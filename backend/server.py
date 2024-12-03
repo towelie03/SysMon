@@ -8,7 +8,8 @@ from .nvidia_gpu_handler import GPU
 from fastapi.middleware.cors import CORSMiddleware
 from .notify_res import NotificationService
 from .database import Database
-from .UserSettings import UserSettings 
+from .UserSettings import UserSettings
+
 app = FastAPI()
 
 db = Database("settings.db")
@@ -50,7 +51,7 @@ async def websocket_endpoint(websocket: WebSocket):
             data = await websocket.receive_text()
             # Optionally handle incoming messages from the client
             print(f"Received from client: {data}")
-    except:
+    except Exception:
         print("WebSocket connection closed")
         # Cleanup: Remove the listener when the client disconnects
         notification_service.listeners.remove(on_event)
@@ -193,9 +194,10 @@ def get_bandwidth_usage():
         "ipv6": Network.get_primary_ipv6(),
         "type": Network.get_primary_connection_type(),
     }
-    
+
+
 @app.get("/network/bandwidth")
-def get_bandwidth_usage():
+def get_single_bandwidth_usage():
     return {"bandwidth_usage": Network.get_bandwidth_usage()}
 
 
