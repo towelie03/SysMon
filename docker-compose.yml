@@ -36,6 +36,18 @@ services:
       python3 run_notification_client.py
       "
 
+  frontend:
+    image: node:23.3.0-alpine3.19
+    working_dir: /app      
+    volumes:
+      - ./frontend:/app    
+    ports:
+      - "4173:4173"        
+    command: >
+      sh -c "npm ci &&
+             npm run build &&
+             npm run preview"
+
   # db:
   #   image: mysql:8.0
   #   container_name: sysmon_db
