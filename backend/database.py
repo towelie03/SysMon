@@ -1,5 +1,7 @@
 import sqlite3
-from .UserSettings import UserSettings 
+from .UserSettings import UserSettings
+
+
 class Database:
     def __init__(self, db_name="settings.db"):
         """Initialize the database and create the settings table."""
@@ -9,7 +11,8 @@ class Database:
 
     def _create_table(self):
         """Create the user_settings table if it doesn't already exist."""
-        self.cursor.execute("""
+        self.cursor.execute(
+            """
             CREATE TABLE IF NOT EXISTS user_settings (
                 id INTEGER PRIMARY KEY,
                 cpu_threshold INTEGER DEFAULT 80,
@@ -20,16 +23,19 @@ class Database:
                 check_interval INTEGER DEFAULT 10,
                 theme TEXT DEFAULT 'Catpuccin'
             )
-        """)
+        """
+        )
         self.connection.commit()
 
         # Ensure a default entry exists if the table is empty
         self.cursor.execute("SELECT COUNT(*) FROM user_settings")
         if self.cursor.fetchone()[0] == 0:
-            self.cursor.execute("""
+            self.cursor.execute(
+                """
                 INSERT INTO user_settings (cpu_threshold, memory_threshold, disk_threshold, network_threshold, gpu_threshold, check_interval, theme)
                 VALUES (80, 80, 80, 1000000, 80, 10, 'Catpuccin')
-            """)
+            """
+            )
             self.connection.commit()
 
     def get_thresholds(self) -> UserSettings:
@@ -44,24 +50,27 @@ class Database:
                 network_threshold=result[4],
                 gpu_threshold=result[5],
                 check_interval=result[6],
-                theme=result[7]
+                theme=result[7],
             )
         return None
 
     def update_thresholds(self, settings: UserSettings):
         """Update user settings in the database using a UserSettings instance."""
-        self.cursor.execute("""
+        self.cursor.execute(
+            """
             INSERT OR REPLACE INTO user_settings (id, cpu_threshold, memory_threshold, disk_threshold, network_threshold, gpu_threshold, check_interval, theme)
             VALUES (1, ?, ?, ?, ?, ?, ?, ?)
-        """, (
-            settings.cpu_threshold,
-            settings.memory_threshold,
-            settings.disk_threshold,
-            settings.network_threshold,
-            settings.gpu_threshold,
-            settings.check_interval,
-            settings.theme
-        ))
+        """,
+            (
+                settings.cpu_threshold,
+                settings.memory_threshold,
+                settings.disk_threshold,
+                settings.network_threshold,
+                settings.gpu_threshold,
+                settings.check_interval,
+                settings.theme,
+            ),
+        )
         self.connection.commit()
 
     def update_theme(self, theme):
@@ -73,7 +82,7 @@ class Database:
         """Retrieve the current theme."""
         self.cursor.execute("SELECT theme FROM user_settings LIMIT 1")
         row = self.cursor.fetchone()
-        return row[0] if row else 'Catpuccin'
+        return row[0] if row else "Catpuccin"
 
     def close(self):
         """Close the database connection."""

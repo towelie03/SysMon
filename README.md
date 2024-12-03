@@ -12,9 +12,10 @@ SysMon is a system monitoring application that tracks CPU, memory, disk, network
 
 ## Prerequisites
 
-- Python 3.8+
+- Python 3.9
 - Docker
 - Docker Compose
+- Linux
 
 ## Installation
 
@@ -25,7 +26,19 @@ SysMon is a system monitoring application that tracks CPU, memory, disk, network
    ```sh
    git clone https://github.com/towelie03/SysMon.git
    cd SysMon
-   echo "RECEIVER_EMAIL=YOUR_EMAIL" > .env
-   docker-compose up
    ```
 
+2. **Create a .env file with your receiver email:**
+   ```sh
+   echo "RECEIVER_EMAIL=YOUR_EMAIL" > .env
+   ```
+
+3. **Start the application:**
+   ```sh
+   docker-compose up
+   ```
+4. **Open your browser and navigate to:**
+
+- Frontend: http://localhost:4173
+
+- Backend API: http://localhost:8000/docs

@@ -1,10 +1,12 @@
-import pytest
-from unittest.mock import patch, Mock
-import json
 import os
+import json
+from unittest.mock import patch, Mock
+
+# Set environment variables before importing dependent modules
 os.environ["RECEIVER_EMAIL"] = "mock_receiver@example.com"
 
-from notification_client.email_alert import send_email_alert, callback
+# Import after environment setup
+from notification_client.email_alert import send_email_alert, callback  # noqa: E402
 
 
 @patch("notification_client.email_alert.SMTP_SERVER", "mock.smtp.server")
@@ -26,11 +28,13 @@ def test_send_email_alert(mock_smtp):
     # Verify SMTP methods were called correctly
     mock_smtp.assert_called_once_with("mock.smtp.server", 1025)
     mock_server.starttls.assert_called_once()
-    mock_server.login.assert_called_once_with("mock_sender@example.com", "mock_password")
+    mock_server.login.assert_called_once_with(
+        "mock_sender@example.com", "mock_password"
+    )
     mock_server.sendmail.assert_called_once_with(
         "mock_sender@example.com",
         "mock_receiver@example.com",
-        "Content-Type: text/plain; charset=\"us-ascii\"\n"
+        'Content-Type: text/plain; charset="us-ascii"\n'
         "MIME-Version: 1.0\n"
         "Content-Transfer-Encoding: 7bit\n"
         "Subject: Test Subject\n"
@@ -54,11 +58,13 @@ def test_callback(mock_send_email_alert):
     mock_channel = Mock()
     mock_method = Mock()
     mock_properties = Mock()
-    mock_body = json.dumps({
-        "type": "High CPU Usage",
-        "message": "CPU usage exceeded 90% for 5 minutes.",
-        "timestamp": "2024-11-25 12:00:00"
-    }).encode()
+    mock_body = json.dumps(
+        {
+            "type": "High CPU Usage",
+            "message": "CPU usage exceeded 90% for 5 minutes.",
+            "timestamp": "2024-11-25 12:00:00",
+        }
+    ).encode()
 
     # Call the function
     callback(mock_channel, mock_method, mock_properties, mock_body)
@@ -67,8 +73,10 @@ def test_callback(mock_send_email_alert):
     mock_send_email_alert.assert_called_once_with(
         "System Alert: High CPU Usage",
         "Time: 2024-11-25 12:00:00\n\nAlert: High CPU Usage\n\nDetails: CPU usage exceeded 90% for 5 minutes.",
-        "mock_receiver@example.com"
+        "mock_receiver@example.com",
     )
 
     # Verify message was acknowledged
-    mock_channel.basic_ack.assert_called_once_with(delivery_tag=mock_method.delivery_tag)
+    mock_channel.basic_ack.assert_called_once_with(
+        delivery_tag=mock_method.delivery_tag
+    )

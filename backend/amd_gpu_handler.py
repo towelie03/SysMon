@@ -1,8 +1,10 @@
 import pyamdgpuinfo
-#https://pypi.org/project/pyamdgpuinfo/
+
+# https://pypi.org/project/pyamdgpuinfo/
+
 
 class AMDGPU:
-    
+
     @staticmethod
     def _check_gpus():
         """
@@ -19,7 +21,7 @@ class AMDGPU:
         gpus = AMDGPU._check_gpus()
         if gpus is None:
             return "No AMD GPUs found."
-        
+
         usage = {}
         for device in gpus:
             usage[device.id] = device.activity * 100  # Activity is a float [0.0 - 1.0]
@@ -33,7 +35,7 @@ class AMDGPU:
         gpus = AMDGPU._check_gpus()
         if gpus is None:
             return "No AMD GPUs found."
-        
+
         temperatures = {}
         for device in gpus:
             temperatures[device.id] = device.temperature
@@ -47,12 +49,12 @@ class AMDGPU:
         gpus = AMDGPU._check_gpus()
         if gpus is None:
             return "No AMD GPUs found."
-        
+
         memory_usage = {}
         for device in gpus:
             memory_usage[device.id] = {
-                'used': device.memory_used,
-                'total': device.memory_total
+                "used": device.memory_used,
+                "total": device.memory_total,
             }
         return memory_usage
 
@@ -72,17 +74,18 @@ class AMDGPU:
         gpus = AMDGPU._check_gpus()
         if gpus is None:
             return "No AMD GPUs found."
-        
+
         details = {}
         for device in gpus:
             details[device.id] = {
-                'name': device.name,
-                'activity': device.activity * 100,  # Convert to percentage
-                'memory_used': device.memory_used,
-                'memory_total': device.memory_total,
-                'temperature': device.temperature
+                "name": device.name,
+                "activity": device.activity * 100,  # Convert to percentage
+                "memory_used": device.memory_used,
+                "memory_total": device.memory_total,
+                "temperature": device.temperature,
             }
         return details
+
 
 def main():
     print("Overall AMD GPU usage:")
@@ -100,6 +103,6 @@ def main():
     print("\nAMD GPU details:")
     print(AMDGPU.get_gpu_details())
 
+
 if __name__ == "__main__":
     main()
-

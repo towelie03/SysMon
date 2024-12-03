@@ -3,16 +3,15 @@ name: Python application
 on: [push, pull_request]
 
 jobs:
-  test:
-
+  backend-tests:
+    name: Run Backend Unit Tests and Lint
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Set up Python
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v5
       with:
         python-version: '3.9' # Changed from 3.x
 
@@ -20,11 +19,43 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        pip install pytest
+        pip install pytest flake8
         # Install both root and backend requirements
 
+    - name: Run Flake8 Linter
+      run:  flake8 backend/
+    
     - name: Run tests
       env:
         PYTHONPATH: ${{ github.workspace }}  # Set the repository root as the Python path
       run: |
         pytest tests
+
+  validate-docker-compose:
+    name: Validate Docker Compose Services
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Install Docker Compose
+      - name: Install Docker Compose
+        run: sudo apt-get update && sudo apt-get install -y docker-compose
+
+      # Step 3: Start Docker Compose Services
+      - name: Start services
+        run: docker-compose up -d
+
+      # Step 4: Wait for Services to Initialize
+      - name: Wait for services to be ready
+        run: sleep 30
+
+      # Step 5: Validate Frontend with curl
+      - name: Check Frontend Service
+        run: |
+          curl --fail --silent http://localhost:4173 || exit 1
+
+      # Step 6: Stop Docker Compose Services
+      - name: Stop services
+        run: docker-compose down

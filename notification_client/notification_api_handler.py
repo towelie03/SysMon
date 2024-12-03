@@ -1,6 +1,6 @@
 import requests
 
-BASE_URL="http://127.0.0.1:8000"
+BASE_URL = "http://127.0.0.1:8000"
 
 
 def fetch_cpu_usage():
@@ -12,6 +12,7 @@ def fetch_cpu_usage():
         print(f"Error fetching CPU usage: {e}")
         return None
 
+
 def fetch_memory_percent():
     try:
         response = requests.get(f"{BASE_URL}/memory/percent")
@@ -20,6 +21,7 @@ def fetch_memory_percent():
     except Exception as e:
         print(f"Error fetching memory percent: {e}")
         return None
+
 
 def fetch_network_bandwidth():
     try:

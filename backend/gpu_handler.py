@@ -1,6 +1,6 @@
 import GPUtil
-import os
 import subprocess
+
 
 class GPU:
 
@@ -30,7 +30,9 @@ class GPU:
         gpus = GPU._check_gpus()
         if gpus is None:
             return "No GPUs found."
-        return {gpu.id: {'used': gpu.memoryUsed, 'total': gpu.memoryTotal} for gpu in gpus}
+        return {
+            gpu.id: {"used": gpu.memoryUsed, "total": gpu.memoryTotal} for gpu in gpus
+        }
 
     @staticmethod
     def get_gpu_temperature():
@@ -61,12 +63,12 @@ class GPU:
         details = {}
         for gpu in gpus:
             details[gpu.id] = {
-                'name': gpu.name,
-                'load': gpu.load * 100,
-                'memoryTotal': gpu.memoryTotal,
-                'memoryUsed': gpu.memoryUsed,
-                'temperature': gpu.temperature,
-                'uuid': gpu.uuid
+                "name": gpu.name,
+                "load": gpu.load * 100,
+                "memoryTotal": gpu.memoryTotal,
+                "memoryUsed": gpu.memoryUsed,
+                "temperature": gpu.temperature,
+                "uuid": gpu.uuid,
             }
         return details
 
@@ -77,13 +79,18 @@ class GPU:
         """
         try:
             output = subprocess.check_output(
-                ["nvidia-smi", "--query-gpu=power.draw", "--format=csv,noheader,nounits"]
+                [
+                    "nvidia-smi",
+                    "--query-gpu=power.draw",
+                    "--format=csv,noheader,nounits",
+                ]
             )
             power_usage = output.decode("utf-8").strip().split("\n")
             power_usage = [float(power) for power in power_usage]
             return {i: power for i, power in enumerate(power_usage)}
         except Exception as e:
             return str(e)
+
 
 def main():
     print("Overall GPU usage:")
@@ -104,6 +111,6 @@ def main():
     print("\nGPU power usage:")
     print(GPU.get_gpu_power_usage())
 
+
 if __name__ == "__main__":
     main()
-

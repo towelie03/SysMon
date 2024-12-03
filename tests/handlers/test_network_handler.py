@@ -8,6 +8,7 @@ from backend.network_handler import Network
 @pytest.fixture
 def mock_net_io_counters(monkeypatch):
     """Fixture to mock psutil.net_io_counters."""
+
     class MockNetIoCounters:
         bytes_sent = 100000000  # 100 MB
         bytes_recv = 150000000  # 150 MB
@@ -40,25 +41,30 @@ def mock_socket_gethostbyname(monkeypatch):
 @pytest.fixture
 def mock_socket_getaddrinfo(monkeypatch):
     """Fixture to mock socket.getaddrinfo for IPv6."""
+
     def _mock(hostname, *args, **kwargs):
         return [(socket.AF_INET6, None, None, None, ("fe80::1", 0, 0, 0))]
+
     monkeypatch.setattr(socket, "getaddrinfo", _mock)
 
 
 @pytest.fixture
 def mock_net_if_addrs(monkeypatch):
     """Fixture to mock psutil.net_if_addrs."""
+
     def _mock():
         return {
             "wlan0": [],
             "eth0": [],
         }
+
     monkeypatch.setattr(psutil, "net_if_addrs", _mock)
 
 
 @pytest.fixture
 def mock_net_if_stats(monkeypatch):
     """Fixture to mock psutil.net_if_stats."""
+
     class MockInterfaceStats:
         isup = True
 
@@ -67,6 +73,7 @@ def mock_net_if_stats(monkeypatch):
             "wlan0": MockInterfaceStats(),
             "eth0": MockInterfaceStats(),
         }
+
     monkeypatch.setattr(psutil, "net_if_stats", _mock)
 
 
@@ -126,8 +133,11 @@ def test_get_primary_connection_type_wifi(mock_net_if_addrs, mock_net_if_stats):
     assert result == "WiFi"
 
 
-def test_get_primary_connection_type_ethernet(mock_net_if_addrs, mock_net_if_stats, monkeypatch):
+def test_get_primary_connection_type_ethernet(
+    mock_net_if_addrs, mock_net_if_stats, monkeypatch
+):
     """Test get_primary_connection_type for Ethernet."""
+
     # Set the `isup` attribute of `wlan0` to False to simulate Ethernet connection.
     def mock_net_if_stats_override():
         class MockInterfaceStats:
@@ -142,7 +152,6 @@ def test_get_primary_connection_type_ethernet(mock_net_if_addrs, mock_net_if_sta
     monkeypatch.setattr(psutil, "net_if_stats", mock_net_if_stats_override)
     result = Network.get_primary_connection_type()
     assert result == "Ethernet"
-
 
 
 if __name__ == "__main__":
